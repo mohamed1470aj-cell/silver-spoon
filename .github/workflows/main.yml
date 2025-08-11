@@ -18,18 +18,18 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Download Tiktok.zip from Google Drive
+      - name: Download Download.zip from Google Drive
         shell: powershell
         run: |
           $url = '${{ secrets.GDRIVE_TIK_URL }}'
-          $output = 'Affiliate.zip'
+          $output = 'Download.zip'
           Invoke-WebRequest -Uri $url -OutFile $output
 
-      - name: Unzip Tiktok.zip
+      - name: Unzip Download.zip
         shell: powershell
         run: |
-          Expand-Archive -Path Affiliate.zip -DestinationPath . -Force
-          Remove-Item Affiliate.zip
+          Expand-Archive -Path Download.zip -DestinationPath . -Force
+          Remove-Item Download.zip
 
       - name: Install Python dependencies
         run: |
