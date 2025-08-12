@@ -47,7 +47,7 @@ jobs:
             Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
           }
           # Update Google Chrome
-          choco upgrade googlechrome -y
+          choco upgrade googlechrome -y --ignore-checksums
           # Install ChromeDriver that matches installed Chrome
           choco upgrade chromedriver --force -y
 
