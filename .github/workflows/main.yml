@@ -17,12 +17,17 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          
+      - name: Setup Google Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          # This action ensures a consistent version of Chrome is installed,
+          # preventing the version mismatch error with undetected-chromedriver.
+          chrome-version: 'latest'
 
       - name: Download Download.zip from Google Drive
         shell: powershell
         run: |
-          # IMPORTANT: The URL must be a direct download link.
-          # A regular Google Drive sharing link will not work.
           $url = '${{ secrets.GDRIVE_TIK_URL }}'
           $output = 'Download.zip'
           Invoke-WebRequest -Uri $url -OutFile $output
@@ -34,6 +39,13 @@ jobs:
           Remove-Item Download.zip
 
       - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install undetected-chromedriver
+
+      - name: Run pex2.py
+        run: python pex2.py
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
