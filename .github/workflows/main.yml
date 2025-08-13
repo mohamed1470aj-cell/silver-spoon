@@ -2,7 +2,7 @@ name: Run pex2.py
 
 on:
   schedule:
-    - cron: "/30 * * * *"  # every hour
+    - cron: "*/30 * * * *"  # every hour
   workflow_dispatch:
 
 jobs:
