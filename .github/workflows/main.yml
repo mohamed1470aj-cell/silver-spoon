@@ -2,7 +2,7 @@ name: Run pex2.py
 
 on:
   schedule:
-    - cron: "/30 * * * *"  # every hour
+    - cron: "30 * * * *"  # Corrected syntax: Runs at 30 minutes past every hour
   workflow_dispatch:
 
 jobs:
@@ -21,6 +21,8 @@ jobs:
       - name: Download Download.zip from Google Drive
         shell: powershell
         run: |
+          # IMPORTANT: The URL must be a direct download link.
+          # A regular Google Drive sharing link will not work.
           $url = '${{ secrets.GDRIVE_TIK_URL }}'
           $output = 'Download.zip'
           Invoke-WebRequest -Uri $url -OutFile $output
@@ -35,21 +37,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install webdriver-manager
+          pip install undetected-chromedriver  # Added this line as it's a common dependency for automation
 
-      - name: Auto-update Chrome and ChromeDriver
-        shell: powershell
-        run: |
-          # Install Chocolatey if not already installed
-          if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-            Set-ExecutionPolicy Bypass -Scope Process -Force
-            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-            Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-          }
-          # Update Google Chrome
-          choco upgrade googlechrome -y --ignore-checksums
-          # Install ChromeDriver that matches installed Chrome
-          choco upgrade chromedriver --force -y
+      # NOTE: Removed the complex "Auto-update Chrome and ChromeDriver" step.
+      # The `undetected-chromedriver` library (installed above) will
+      # automatically find and download a compatible driver, which is a more
+      # reliable and cleaner approach.
 
       - name: Run pex2.py
         run: python pex2.py
