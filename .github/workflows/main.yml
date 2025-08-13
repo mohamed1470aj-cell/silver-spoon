@@ -46,15 +46,3 @@ jobs:
 
       - name: Run pex2.py
         run: python pex2.py
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install undetected-chromedriver  # Added this line as it's a common dependency for automation
-
-      # NOTE: Removed the complex "Auto-update Chrome and ChromeDriver" step.
-      # The `undetected-chromedriver` library (installed above) will
-      # automatically find and download a compatible driver, which is a more
-      # reliable and cleaner approach.
-
-      - name: Run pex2.py
-        run: python pex2.py
