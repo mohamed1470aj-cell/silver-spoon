@@ -2,7 +2,7 @@ name: Run pex2.py
 
 on:
   schedule:
-    - cron: "30 * * * *"  # Corrected syntax: Runs at 30 minutes past every hour
+    - cron: "/30 * * * *"  # every hour
   workflow_dispatch:
 
 jobs:
@@ -17,13 +17,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          
-      - name: Setup Google Chrome
-        uses: browser-actions/setup-chrome@v1
-        with:
-          # This action ensures a consistent version of Chrome is installed,
-          # preventing the version mismatch error with undetected-chromedriver.
-          chrome-version: 'latest'
 
       - name: Download Download.zip from Google Drive
         shell: powershell
@@ -42,7 +35,21 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install undetected-chromedriver
+          pip install webdriver-manager
+
+      - name: Auto-update Chrome and ChromeDriver
+        shell: powershell
+        run: |
+          # Install Chocolatey if not already installed
+          if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
+            Set-ExecutionPolicy Bypass -Scope Process -Force
+            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+            Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+          }
+          # Update Google Chrome
+          choco upgrade googlechrome -y --ignore-checksums
+          # Install ChromeDriver that matches installed Chrome
+          choco upgrade chromedriver --force -y
 
       - name: Run pex2.py
         run: python pex2.py
